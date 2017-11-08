@@ -9,8 +9,7 @@ public class Class extends Basic_object{
 	}
 	@Override
 	protected void draw(Graphics g) {
-		g.drawRect( x_cord, y_cord, 80, 150);
-		
+		g.drawRect( x_cord, y_cord, 120, 170);
 	}
 	
 	

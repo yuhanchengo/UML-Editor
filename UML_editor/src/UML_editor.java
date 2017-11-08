@@ -25,7 +25,7 @@ public class UML_editor extends JFrame{
 	public static ArrayList<JButton> buttons = new ArrayList<JButton>();
 	// pre_setting in constructor
 	UML_editor(){
-		this.setLayout(new BorderLayout());
+//		this.setLayout(new BorderLayout());
 		
 		// Menu Bar of frame
 		JMenuBar menuBar = new JMenuBar();
@@ -55,29 +55,29 @@ public class UML_editor extends JFrame{
 		buttons.add(compos);
 		JButton Class = createButton("CLASS");
 		buttons.add(Class);
-		JButton usecass = createButton("USE_CASS");
-		buttons.add(usecass);
+		JButton usecase = createButton("USE_CASE");
+		buttons.add(usecase);
 		for(int i=0; i<buttons.size(); i++){
 			buttons.get(i).addActionListener(new BtnListener());
 			btnPanel.add(buttons.get(i));
 		}
 		
 		// canvas panel setting
-		/*
+		
 		JComponent cvsPanel = new JPanel();
-		cvsPanel.add(new UML_canvas());*/
+		cvsPanel.add(new UML_canvas());
 		
 		// splitPane to split canvas and btnPanel
-		/*
+		
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setLeftComponent(btnPanel);
 		splitPane.setRightComponent(cvsPanel);
-		splitPane.setResizeWeight(0.05);*/
+		splitPane.setResizeWeight(0.05);
 		
 		// add components to frame
-		this.add(btnPanel, BorderLayout.WEST);
-		this.add(new UML_canvas(), BorderLayout.EAST);
-//		this.add(splitPane, BorderLayout.CENTER);
+//		this.add(btnPanel, BorderLayout.WEST);
+//		this.add(new UML_canvas(), BorderLayout.EAST);
+		this.add(splitPane, BorderLayout.CENTER);
 		this.setJMenuBar(menuBar);
 	}
 	private static JButton createButton(String Name){
