@@ -1,17 +1,13 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -116,6 +112,8 @@ public class UML_editor extends JFrame{
 			buttons.get(i).setBackground(Color.white);
 			buttons.get(i).setOpaque(true);
 		}
+		// reset click_count when mode changed
+		UML_canvas.click_count=0;
 	}
 	
 	
