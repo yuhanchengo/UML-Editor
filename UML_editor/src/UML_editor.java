@@ -18,7 +18,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-
+/*
+ * The main frame of the UML editor applicaiton
+ */
 
 public class UML_editor extends JFrame{
 	public static String mode;
@@ -62,16 +64,10 @@ public class UML_editor extends JFrame{
 			btnPanel.add(buttons.get(i));
 		}
 		
-		// canvas panel setting
-		
-		JComponent cvsPanel = new JPanel();
-		cvsPanel.add(new UML_canvas());
-		
 		// splitPane to split canvas and btnPanel
-		
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setLeftComponent(btnPanel);
-		splitPane.setRightComponent(cvsPanel);
+		splitPane.setRightComponent(new UML_canvas());
 		splitPane.setResizeWeight(0.05);
 		
 		// add components to frame
