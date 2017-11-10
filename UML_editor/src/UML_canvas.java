@@ -171,11 +171,15 @@ public class UML_canvas extends Canvas implements MouseListener{
 				// find minimum distance port
 				for(Point p: bo.port_cords){
 					 double dist = distance(clicked_position, p);
+					 System.out.println(p.x + " " + p.y);
+					 System.out.println("clicked_position" + clicked_position.x + " " + clicked_position.y);
+					 System.out.println("distance : " + dist);
 					if(dist < min){
-						showPort = p;
+						showPort = (Point) p.clone();
 						min = dist;
 					}
 				}
+				System.out.println("showport: " + showPort.x + " " + showPort.y);
 			}
 		}
 		repaint();

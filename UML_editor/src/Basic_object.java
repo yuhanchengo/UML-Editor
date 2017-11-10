@@ -33,7 +33,7 @@ public abstract class Basic_object{
 	}
 	// check if point p is contained in an basic object
 	protected boolean contains(Point p){
-		System.out.println(object_width + " " + object_height);
+//		System.out.println(object_width + " " + object_height);
 		if(p.x<this.x_cord+object_width && p.x>x_cord){
 			if(p.y>this.y_cord && p.y<this.y_cord+object_height){
 				return true;
