@@ -8,7 +8,6 @@ public class Composition_line extends Connection_line{
 		super(src, des);
 		size = 10;
 		diagonal = (int)(this.size*Math.sqrt(2)/2);
-		System.out.println(src.x+ " " + src.y+" " + des.x + " " + des.y);
 	}
 
 	@Override

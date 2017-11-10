@@ -31,6 +31,7 @@ public class UML_canvas extends Canvas implements MouseListener{
 	private static final int canvas_width = 860;
 	private static final int canvas_length = 710;
 	public static int click_count = 0;
+	private static Point showPort = new Point(-1, -1);
 	UML_canvas(){
 		setBackground(Color.WHITE);
 		setPreferredSize(new Dimension(canvas_width, canvas_length));
@@ -59,17 +60,26 @@ public class UML_canvas extends Canvas implements MouseListener{
 	        bo.draw(g);
 	        // if is Class then draw two more lines on it (just it's appearance)
 	        if(bo instanceof Class){
-	        	g.drawLine(bo.x_cord, (bo.y_cord + bo.object_height/3), bo.x_cord+Basic_object.object_width, (bo.y_cord+bo.object_height/3));
+	        	g.drawLine(bo.x_cord, (bo.y_cord + bo.object_height/3), bo.x_cord+bo.object_width, (bo.y_cord+bo.object_height/3));
 	        	g.drawLine(bo.x_cord, bo.y_cord + bo.object_height/3*2, bo.x_cord+bo.object_width, bo.y_cord+bo.object_height/3*2);
 	        }
-	        // if port_on is true then show connection ports
-	        if(!bo.port_on){
+	        // (SELECT)if port_on is true then show connection ports
+	        if(bo.port_on){
 	        	for(Point coord: bo.port_cords){
 	        		g.setColor(Color.black);
 	        		g.fillRect(coord.x, coord.y, bo.port_size, bo.port_size);
 	        		g.setColor(Color.black);
 	        		g.drawRect(coord.x, coord.y, bo.port_size, bo.port_size);
 	        	}
+	        }
+	        // if showPort is set
+	        if(!showPort.equals(new Point(-1, -1))){
+	        	g.setColor(Color.black);
+	        	g.fillRect(showPort.x, showPort.y,bo.port_size , bo.port_size);
+	        	g.setColor(Color.black);
+	        	g.drawRect(showPort.x, showPort.y,bo.port_size , bo.port_size);
+	        	showPort.x= -1;
+	        	showPort.y = -1;
 	        }
 	       
 	    }
@@ -110,16 +120,15 @@ public class UML_canvas extends Canvas implements MouseListener{
 		if(e.getButton() == MouseEvent.BUTTON1){
 			clicked_position = e.getPoint();
 			if(UML_editor.mode == "CLASS" && click_count<3 ){
-//				clicked_position = e.getPoint();
 				addObject(new Class((int) clicked_position.getX(), (int)clicked_position.getY()));
 				click_count++;
 			}else if(UML_editor.mode == "USE_CASE" && click_count<3){
-//				clicked_position = e.getPoint();
 				addObject(new Use_case((int)clicked_position.getX(), (int)clicked_position.getY()));
 				click_count++;
 			}else if(UML_editor.mode == "COMPOS"){
-//				clicked_position = e.getPoint();
-				addLine(new Composition_line(clicked_position, new Point(500,500)));
+				checkPort();
+				System.out.println("compos mode");
+//				addLine(new Composition_line(clicked_position, new Point(500,500)));
 			}else if(UML_editor.mode == "ASSOC" ){
 				addLine(new Association_line(clicked_position, new Point(500, 500)));
 			}else if(UML_editor.mode == "GENER"){
@@ -130,18 +139,10 @@ public class UML_canvas extends Canvas implements MouseListener{
 		}
 		
 	}
-	private void addObject(Basic_object obj){
-		objects.add(obj);
-		repaint();
-	}
-	private void addLine(Connection_line line){
-		lines.add(line);
-		repaint();
-	}
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+//		System.out.println("released");
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
@@ -152,6 +153,38 @@ public class UML_canvas extends Canvas implements MouseListener{
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	private void addObject(Basic_object obj){
+		objects.add(obj);
+		repaint();
+	}
+	private void addLine(Connection_line line){
+		lines.add(line);
+		repaint();
+	}
+	// if it is in a class or a use_case
+	public void checkPort(){
+		double min = 1000;
+		for(Basic_object bo : objects){
+			if(bo.contains(clicked_position)){
+//				System.out.println("contains point");
+				// find minimum distance port
+				for(Point p: bo.port_cords){
+					 double dist = distance(clicked_position, p);
+					if(dist < min){
+						showPort = p;
+						min = dist;
+					}
+				}
+			}
+		}
+		repaint();
+
+	}
+	private double distance(Point p1, Point p2){
+		double distance = Math.sqrt(Math.pow(p1.x-p2.x ,2)+Math.pow((p1.y-p2.y), 2));
+//		System.out.println(p2.x + " " + p2.y + "dis: " + distance);
+		return(distance);
 	}
 	
 }
