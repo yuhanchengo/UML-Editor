@@ -126,7 +126,13 @@ public class UML_canvas extends Canvas implements MouseListener{
 				addObject(new Use_case((int)clicked_position.getX(), (int)clicked_position.getY()));
 				click_count++;
 			}else if(UML_editor.mode == "COMPOS"){
-				checkPort();
+				// check if clicked point is inside an object
+				for(Basic_object bo : objects){
+					if(bo.contains(clicked_position)){
+						checkPort(bo);
+					}
+				}
+				
 				System.out.println("compos mode");
 //				addLine(new Composition_line(clicked_position, new Point(500,500)));
 			}else if(UML_editor.mode == "ASSOC" ){
@@ -163,25 +169,17 @@ public class UML_canvas extends Canvas implements MouseListener{
 		repaint();
 	}
 	// if it is in a class or a use_case
-	public void checkPort(){
+	public void checkPort( Basic_object bo){
 		double min = 1000;
-		for(Basic_object bo : objects){
-			if(bo.contains(clicked_position)){
-//				System.out.println("contains point");
-				// find minimum distance port
-				for(Point p: bo.port_cords){
-					 double dist = distance(clicked_position, p);
-					 System.out.println(p.x + " " + p.y);
-					 System.out.println("clicked_position" + clicked_position.x + " " + clicked_position.y);
-					 System.out.println("distance : " + dist);
-					if(dist < min){
-						showPort = (Point) p.clone();
-						min = dist;
-					}
+			// find minimum distance port
+			for(Point p: bo.port_cords){
+					double dist = distance(clicked_position, p);
+				if(dist < min){
+					showPort = (Point) p.clone();
+					min = dist;
 				}
-				System.out.println("showport: " + showPort.x + " " + showPort.y);
 			}
-		}
+//				System.out.println("showport: " + showPort.x + " " + showPort.y);
 		repaint();
 
 	}
