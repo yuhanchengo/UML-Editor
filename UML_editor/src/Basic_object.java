@@ -11,8 +11,8 @@ public abstract class Basic_object{
 	protected String name; // name of object
 	protected int object_height; // length of object
 	protected int object_width; //width of object 
-	protected Boolean port_on = false; // show ports or not
-	protected final int port_size = 10; // 
+	protected Boolean select = false; // show ports or not in other word 
+	public static final int port_size = 10; // 
 	protected ArrayList<Point> port_cords = new ArrayList<Point>();
 	
 	public Basic_object(int x, int y, int object_width, int object_height){

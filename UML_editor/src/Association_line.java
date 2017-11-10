@@ -8,7 +8,7 @@ public class Association_line extends Connection_line{
 	}
 	@Override
 	protected void draw(Graphics g) {
-		g.drawLine(this.src_cord.x, this.src_cord.y, this.des_cord.x, this.des_cord.y);
+		g.drawLine(this.src_cord.x+Basic_object.port_size/2, this.src_cord.y+Basic_object.port_size/2, this.des_cord.x+Basic_object.port_size/2, this.des_cord.y+Basic_object.port_size/2);
 	}
 	
 }
