@@ -11,15 +11,17 @@ public abstract class Basic_object{
 	protected String name; // name of object
 	protected int object_height; // length of object
 	protected int object_width; //width of object 
+	protected int namePosRatio;
 	protected Boolean select = false; // show ports or not in other word 
 	public static final int port_size = 10; // 
 	protected ArrayList<Point> port_cords = new ArrayList<Point>();
 	
-	public Basic_object(int x, int y, int object_width, int object_height){
+	public Basic_object(int x, int y, int object_width, int object_height, int namePosRatio){
 		this.x_cord = x;
 		this.y_cord = y;
 		this.object_height = object_height;
 		this.object_width = object_width;
+		this.namePosRatio = namePosRatio;
 		port_cords.add(new Point(x_cord - port_size, y_cord + this.object_height/2-port_size/2));
 		port_cords.add(new Point(x_cord + this.object_width/2 - port_size/2, y_cord + this.object_height));
 		port_cords.add(new Point(x_cord + this.object_width/2 - port_size/2, y_cord - port_size));

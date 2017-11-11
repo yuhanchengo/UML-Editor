@@ -6,8 +6,9 @@ import java.awt.Graphics;
 public class Use_case extends Basic_object{
 protected static int object_width = 160;
 protected static int object_height = 100;
+protected static int namePosRatio = 2;
 	Use_case(int x, int y){
-		super(x, y, object_width, object_height);
+		super(x, y, object_width, object_height, namePosRatio);
 	}
 	@Override
 	protected void draw(Graphics g) {

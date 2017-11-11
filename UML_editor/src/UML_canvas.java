@@ -1,8 +1,11 @@
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -22,6 +25,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	private final int canvas_width = 860;
 	private final int canvas_length = 710;
 	public static int click_count = 0;
+	public static Basic_object selected_object;
 	private Point showPort = new Point(-1, -1);
 	private Point src_port, des_port = new Point(-1, -1);
 	private Basic_object src_obj; // record the source object
@@ -80,6 +84,10 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				g.drawRect(showPort.x, showPort.y, obj_port_size, obj_port_size);
 				showPort.x = -1;
 				showPort.y = -1;
+			}
+			if(bo.name != null){
+				g.setFont(new Font("TimesRoman",Font.PLAIN, 16));
+				g.drawString(bo.name, bo.x_cord + (bo.object_width-bo.name.length()*7)/2 , bo.y_cord+bo.object_height/bo.namePosRatio);
 			}
 
 		}
@@ -157,19 +165,18 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 						src_port = (Point) showPort.clone();
 					}
 				}
-				
-			}else if(UML_editor.mode == "SELECT"){
+
+			} else if (UML_editor.mode == "SELECT") {
 				// if some single object is selected
-				System.out.println("objects length" + objects.size());
-				for(Basic_object bo: objects){
+				for (Basic_object bo : objects) {
 					bo.select = false;
-					System.out.println("select: " + bo.select);
-					if(bo.contains(clicked_position)){
+					if (bo.contains(clicked_position)) {
 						bo.select = true;
+						selected_object = bo;
 					}
 				}
 				repaint();
-			}else if (click_count >= 3) { // control # objects can add
+			} else if (click_count >= 3) { // control # objects can add
 				JOptionPane.showMessageDialog(this.getParent(), "You can at most add three objects once");
 			}
 		}
@@ -178,7 +185,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
+
 		if (UML_editor.mode == "COMPOS" || UML_editor.mode == "ASSOC" || UML_editor.mode == "GENER") {
 			clicked_position = e.getPoint();
 			for (Basic_object bo : objects) {
@@ -188,7 +195,8 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 					des_port = (Point) showPort.clone();
 				}
 			}
-			// if source and destination ports are both assigned, then the connection_line will appear 
+			// if source and destination ports are both assigned, then the
+			// connection_line will appear
 			if (src_port.x != -1 && src_port.y != -1 && des_port.x != -1 && des_port.y != -1) {
 				switch (UML_editor.mode) {
 				case "COMPOS":
@@ -239,6 +247,19 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		repaint();
 	}
 
+	// mouseMotionListener
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
 	// check which port of the object to show
 	public void checkPort(Basic_object bo) {
 		double min = 1000;
@@ -260,18 +281,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		// System.out.println(p2.x + " " + p2.y + "dis: " + distance);
 		return (distance);
 	}
-
-	// mouseMotionListener
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
+	
+	
 }

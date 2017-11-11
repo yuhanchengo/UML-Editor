@@ -7,8 +7,9 @@ import java.awt.Graphics;
 public class Class extends Basic_object{
 protected static int object_width = 120;
 protected static int object_height = 170;
+protected static int namePosRatio = 5; 
 	Class(int x, int y){
-		super(x,y, object_width, object_height);
+		super(x,y, object_width, object_height, namePosRatio);
 	}
 	
 	@Override
