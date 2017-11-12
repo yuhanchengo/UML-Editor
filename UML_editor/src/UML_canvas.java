@@ -4,8 +4,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -26,6 +26,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	private final int canvas_length = 710;
 	public static int click_count = 0;
 	public static Basic_object selected_object;
+	private boolean singleSelection = false;
 	private Point showPort = new Point(-1, -1);
 	private Point src_port, des_port = new Point(-1, -1);
 	private Basic_object src_obj; // record the source object
@@ -34,6 +35,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		setBackground(Color.WHITE);
 		setPreferredSize(new Dimension(canvas_width, canvas_length));
 		addMouseListener(this);
+		addMouseMotionListener(this);
 	}
 
 	/*
@@ -145,6 +147,8 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		System.out.println("mouse pressed");
+		System.out.println(e.getX() + " " + e.getY());
 		// only when clicked CLASS or USE_CASE button can one draw a figure on
 		// the canvas
 		if (e.getButton() == MouseEvent.BUTTON1) {
@@ -167,13 +171,20 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				}
 
 			} else if (UML_editor.mode == "SELECT") {
-				// if some single object is selected
+				// for single selection
 				for (Basic_object bo : objects) {
 					bo.select = false;
 					if (bo.contains(clicked_position)) {
 						bo.select = true;
 						selected_object = bo;
+						singleSelection = true;
 					}
+				}
+				// for group selection
+				if(selected_object==null){
+//					System.out.println("not in object region");
+					src_port = (Point)clicked_position.clone();
+					System.out.println(src_port);
 				}
 				repaint();
 			} else if (click_count >= 3) { // control # objects can add
@@ -182,10 +193,12 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		}
 
 	}
-
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-
+		System.out.println("mouse released");
+		System.out.println(e.getX() + " " + e.getY());
+		// mouse release action when mode is compos, assoc or gener
 		if (UML_editor.mode == "COMPOS" || UML_editor.mode == "ASSOC" || UML_editor.mode == "GENER") {
 			clicked_position = e.getPoint();
 			for (Basic_object bo : objects) {
@@ -217,9 +230,46 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				showPort.x = showPort.y = -1;
 			}
 			repaint();
+		//not single selection case 
+		}else if(UML_editor.mode == "SELECT" && selected_object==null){
+			clicked_position = e.getPoint();
+			des_port = (Point) clicked_position.clone();
+			System.out.println(src_port.x + " " + src_port.y);
+			int start_x = src_port.x, start_y = src_port.y;
+			if(src_port.x > des_port.x && src_port.y > des_port.y){
+				start_x = des_port.x;
+				start_y = des_port.y;
+			}
+			Shape dragScope = new Rectangle(start_x, start_y, Math.abs(des_port.x-src_port.x), Math.abs(des_port.y-src_port.y));
+			try{
+				boolean included_obj = false;
+				for(Basic_object bo : objects){
+					if(dragScope.contains(bo.x_cord, bo.y_cord) && dragScope.contains(bo.x_cord+bo.object_width, bo.y_cord+bo.object_height)){
+						bo.select = true;
+						included_obj = true;
+					}
+				}
+				if(included_obj==false){
+					// unselect selected objects
+					for(Basic_object bo : objects){
+						bo.select = false;
+					}
+				}
+				drawDragScope(this.getGraphics(), start_x, start_y );
+			}catch(InterruptedException ie){
+				ie.getStackTrace();
+			}
+			
+//			System.out.println(des_port);
 		}
 	}
-
+	public void drawDragScope(Graphics g, int start_x, int start_y) throws InterruptedException{
+		System.out.println("drawDragScope");
+		g.setColor(Color.blue);
+		g.drawRect(start_x, start_y, Math.abs(des_port.x-src_port.x), Math.abs(des_port.y-src_port.y));
+		Thread.sleep(500); // let the scope show for 0.5 sec
+		repaint();
+	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -250,8 +300,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	// mouseMotionListener
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
