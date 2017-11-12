@@ -110,6 +110,7 @@ public class UML_editor extends JFrame {
 				btn.setForeground(Color.black);
 				btn.setOpaque(true);
 				mode = e.getActionCommand();
+				
 
 			}
 

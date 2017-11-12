@@ -4,7 +4,7 @@ import java.util.ArrayList;
 /*
  * The parent class of "Class" and "USE_CASE"
  */
-public abstract class Basic_object{
+public abstract class Basic_object implements Comparable{
 	protected int x_cord; // x_coordinate of object
 	protected int y_cord; // y_coordinate of object
 	protected int depth; // depth of object
@@ -44,5 +44,11 @@ public abstract class Basic_object{
 		return false;
 	}
 	abstract protected void draw( Graphics g);
+
+	public int compareTo(Basic_object compareObject) {
+		return compareObject.depth - this.depth;
+	}
+
+	
 
 }

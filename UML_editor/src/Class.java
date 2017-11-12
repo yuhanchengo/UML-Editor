@@ -20,6 +20,14 @@ protected static int namePosRatio = 5;
 		g.setColor(Color.black);
 		g.drawRect( x_cord, y_cord, object_width, object_height);
 	}
+
+	@Override
+	public int compareTo(Object o) {
+//		super.compareTo(o);
+		return 0;
+	}
+
+
 	
 	
 }

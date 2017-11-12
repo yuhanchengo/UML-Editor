@@ -17,5 +17,10 @@ protected static int namePosRatio = 2;
 		g.setColor(Color.black);
 		g.drawOval(x_cord, y_cord, object_width, object_height);
 	}
+	@Override
+	public int compareTo(Object o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }
