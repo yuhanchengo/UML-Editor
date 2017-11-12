@@ -12,7 +12,7 @@ public abstract class Connection_line {
 		this.des_cord = des;
 	}
 	abstract protected void draw(Graphics g);
-		
+	abstract protected void drawAddsOn(Graphics g, int obj_port_size);
 		
 
 }

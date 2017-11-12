@@ -13,14 +13,25 @@ protected static int namePosRatio = 5;
 	}
 	
 	@Override
+	/*
+	 * draw basic structure of Class objects
+	 */
 	protected void draw(Graphics g) {
-		// draw rectangle with border
+		// draw rectangle with thisrder
 		g.setColor(Color.WHITE);
 		g.fillRect(x_cord, y_cord, object_width, object_height);
 		g.setColor(Color.black);
 		g.drawRect( x_cord, y_cord, object_width, object_height);
 	}
-
+	/*
+	 * draw two more lines for Class objects
+	 */
+	protected void drawClassLine(Graphics g){
+		g.drawLine(this.x_cord, (this.y_cord + object_height / 3), this.x_cord + object_width,
+				(this.y_cord + object_height / 3));
+		g.drawLine(this.x_cord, this.y_cord + object_height / 3 * 2, this.x_cord + object_width,
+				this.y_cord + object_height / 3 * 2);
+	}
 	@Override
 	public int compareTo(Object o) {
 //		super.compareTo(o);

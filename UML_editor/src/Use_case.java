@@ -22,5 +22,10 @@ protected static int namePosRatio = 2;
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	@Override
+	protected void drawClassLine(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

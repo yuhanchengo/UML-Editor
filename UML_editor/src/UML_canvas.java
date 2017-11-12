@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 public class UML_canvas extends Canvas implements MouseListener, MouseMotionListener {
 	// canvas中點擊的座標點
 	private Point clicked_position;
-	private ArrayList<Basic_object> objects = new ArrayList<Basic_object>();
+	protected ArrayList<Basic_object> objects = new ArrayList<Basic_object>();
 	private ArrayList<Connection_line> lines = new ArrayList<Connection_line>();
 	private ArrayList<Point> ports = new ArrayList<Point>();
 	private final int canvas_width = 860;
@@ -28,7 +28,9 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	private int objDepth = 99;
 	public static int click_count = 0;
 	public static Basic_object selected_object;
-	private int selectionMode = 0; // 0: none selected, 1:single selection, 2:group selection
+	public static int selectionMode = 0; // 0: none selected, 1:single
+											// selection, 2:group selection,
+											// 3:composite selection
 	private Point showPort = new Point(-1, -1);
 	private Point src_port, des_port = new Point(-1, -1);
 	private Basic_object src_obj; // record the source object
@@ -59,89 +61,83 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		int port_size = ports.size();
 		int obj_port_size = Basic_object.port_size;
 
-		
-		// draw basic_object
+		/*
+		 * draw basic objects on the graph
+		 */
 		for (int i = 0; i < obj_size; i++) {
 			Basic_object bo = objects.get(i);
-			System.out.println(bo.depth);
-			bo.draw(g);
-			// if is Class then draw two more lines on it (just it's appearance)
-			if (bo instanceof Class) {
-				g.drawLine(bo.x_cord, (bo.y_cord + bo.object_height / 3), bo.x_cord + bo.object_width,
-						(bo.y_cord + bo.object_height / 3));
-				g.drawLine(bo.x_cord, bo.y_cord + bo.object_height / 3 * 2, bo.x_cord + bo.object_width,
-						bo.y_cord + bo.object_height / 3 * 2);
-			}
-			// (SELECT)if port_on is true then show connection ports
-			if (bo.select) {
-				for (Point coord : bo.port_cords) {
-					g.setColor(Color.black);
-					g.fillRect(coord.x, coord.y, obj_port_size, obj_port_size);
-					g.setColor(Color.black);
-					g.drawRect(coord.x, coord.y, obj_port_size, obj_port_size);
+			if(bo instanceof Composite){
+				if(bo.select){
+					for(Basic_object o: bo.compos_objects){
+						o.draw(g);
+						o.drawClassLine(g);
+						for (Point coord : o.port_cords) {
+							showConnectionPort(g, coord.x, coord.y, obj_port_size);
+						}
+					}
+				}else{
+					for(Basic_object o: bo.compos_objects){
+						o.draw(g);
+						o.drawClassLine(g);
+					}
+				}
+			}else{
+				bo.draw(g);
+				bo.drawClassLine(g);
+				if(bo.select){
+					for (Point coord : bo.port_cords) {
+						showConnectionPort(g, coord.x, coord.y, obj_port_size);
+					}
 				}
 			}
-			// if showPort is set
+			/*
+			 * show the port that is going to be connected
+			 */
 			if (!showPort.equals(new Point(-1, -1))) {
 				// System.out.println("in showPort");
-				g.setColor(Color.black);
-				g.fillRect(showPort.x, showPort.y, obj_port_size, obj_port_size);
-				g.setColor(Color.black);
-				g.drawRect(showPort.x, showPort.y, obj_port_size, obj_port_size);
+				showConnectionPort(g, showPort.x, showPort.y, obj_port_size);
 				showPort.x = -1;
 				showPort.y = -1;
 			}
-			if(bo.name != null){
-				g.setFont(new Font("TimesRoman",Font.PLAIN, 16));
-				g.drawString(bo.name, bo.x_cord + (bo.object_width-bo.name.length()*7)/2 , bo.y_cord+bo.object_height/bo.namePosRatio);
+			/*
+			 * if the object has a name, then show its name
+			 */
+			if (bo.name != null) {
+				g.setFont(new Font("TimesRoman", Font.PLAIN, 16));
+				g.drawString(bo.name, bo.x_cord + (bo.object_width - bo.name.length() * 7) / 2,
+						bo.y_cord + bo.object_height / bo.namePosRatio);
 			}
 
 		}
-
-		// draw connection_line
+		/*
+		 * draw connection lines on the graph
+		 */
 		for (int i = 0; i < line_size; i++) {
 			Connection_line line = lines.get(i);
 			line.draw(g);
-			if (line instanceof Composition_line) {
-				int alter_size = (int) (line.size * Math.sqrt(2) / 2);
-				Point north = new Point(line.src_cord.x + alter_size + obj_port_size / 2,
-						line.src_cord.y - alter_size + obj_port_size / 2);
-				Point west = new Point(line.src_cord.x + obj_port_size / 2, line.src_cord.y + obj_port_size / 2);
-				Point east = new Point(line.src_cord.x + alter_size * 2 + obj_port_size / 2,
-						line.src_cord.y + obj_port_size / 2);
-				Point south = new Point(line.src_cord.x + alter_size + obj_port_size / 2,
-						line.src_cord.y + alter_size + obj_port_size / 2);
-				g.drawLine(east.x, east.y, north.x, north.y); // east point to
-																// north point
-				g.drawLine(east.x, east.y, south.x, south.y);// east point to
-																// south point
-				g.drawLine(north.x, north.y, west.x, west.y);
-				g.drawLine(south.x, south.y, west.x, west.y);
-
-			} else if (line instanceof Generalization_line) {
-				int height = (int) (line.size * Math.sqrt(3) / 2);
-				Point top = new Point(line.src_cord.x + obj_port_size / 2, line.src_cord.y + obj_port_size / 2); // 頂點
-				Point left = new Point(line.src_cord.x + height + obj_port_size / 2,
-						line.src_cord.y + line.size / 2 + obj_port_size / 2); // 偏上的點
-				Point right = new Point(line.src_cord.x + height + obj_port_size / 2,
-						line.src_cord.y - line.size / 2 + obj_port_size / 2);// 偏下的點
-				g.drawLine(top.x, top.y, left.x, left.y);
-				g.drawLine(top.x, top.y, right.x, right.y);
-				g.drawLine(right.x, right.y, left.x, left.y);
-			}
+			line.drawAddsOn(g, obj_port_size);
 		}
 
-		// draw ports
+		/*
+		 * draw ports for connection lines
+		 */
 		for (int i = 0; i < port_size; i++) {
 			Point p = ports.get(i);
-			// Coordinate p = ports.get(i);
-			g.setColor(Color.black);
-			g.fillRect(p.x, p.y, obj_port_size, obj_port_size);
-			g.setColor(Color.black);
-			g.drawRect(p.x, p.y, obj_port_size, obj_port_size);
+			showConnectionPort(g, p.x, p.y, obj_port_size);
 
 		}
 	}
+
+	/*
+	 * show connection ports of an object
+	 */
+	public void showConnectionPort(Graphics g, int coord_x, int coord_y, int obj_port_size){
+		g.setColor(Color.black);
+		g.fillRect(coord_x, coord_y, obj_port_size, obj_port_size);
+		g.setColor(Color.black);
+		g.drawRect(coord_x, coord_y, obj_port_size, obj_port_size);
+	}
+
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -151,8 +147,8 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-//		System.out.println("mouse pressed");
-//		System.out.println(e.getX() + " " + e.getY());
+		// System.out.println("mouse pressed");
+		// System.out.println(e.getX() + " " + e.getY());
 		// only when clicked CLASS or USE_CASE button can one draw a figure on
 		// the canvas
 		if (e.getButton() == MouseEvent.BUTTON1) {
@@ -163,7 +159,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				objDepth--;
 				addObject(obj);
 				// sort objects with depth
-				Collections.sort(objects);
 				click_count++;
 			} else if (UML_editor.mode == "USE_CASE" && click_count < 3) {
 				Basic_object obj = new Use_case((int) clicked_position.getX(), (int) clicked_position.getY());
@@ -171,7 +166,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				objDepth--;
 				addObject(obj);
 				// sort objects with depth
-				Collections.sort(objects);
 				click_count++;
 			} else if (UML_editor.mode == "COMPOS" || UML_editor.mode == "ASSOC" || UML_editor.mode == "GENER") {
 				// check if clicked point is inside an object
@@ -186,16 +180,20 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 			} else if (UML_editor.mode == "SELECT") {
 				// for single selection
-				Collections.reverse(objects);
-				boolean objClicked = false; // if any object is clicked 
+				Collections.reverse(objects); // sort from shallow to depth
+				boolean objClicked = false; // if any object is clicked
 				for (Basic_object bo : objects) {
-					System.out.println("bo.depth: " + bo.depth);
-//					bo.select = false;
+					// bo.select = false;
 					if (bo.contains(clicked_position)) {
+						if (bo instanceof Composite) {
+							System.out.println("composite  object clicked");
+							selectionMode = 3;
+						} else {
+							selectionMode = 1;
+						}
 						unselectObjects(); // unselect other objects
 						bo.select = true;
 						selected_object = bo;
-						selectionMode = 1; // this is a single selection mode
 						objClicked = true;
 						break;
 					}
@@ -204,14 +202,15 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				System.out.println("objClicked: " + objClicked);
 				System.out.println("single selection: " + selectionMode);
 				// if no object is clicked and was singleSelection
-				if(selectionMode==1 && !objClicked){
+				if (selectionMode == 1 && !objClicked) {
 					selectionMode = 0;
 					unselectObjects();
-				}else if(!objClicked){ // for group selection or none selection
+				} else if (!objClicked) { // for group selection or none
+											// selection
 					System.out.println("group selection");
 					selectionMode = 2;
-					src_port = (Point)clicked_position.clone();
-//					System.out.println(src_port);
+					src_port = (Point) clicked_position.clone();
+					// System.out.println(src_port);
 				}
 				repaint();
 			} else if (click_count >= 3) { // control # objects can add
@@ -220,25 +219,27 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		}
 
 	}
-	public void unselectObjects(){
-//		System.out.println("unselect objects");
-		for(Basic_object bo: objects){
+
+	public void unselectObjects() {
+		// System.out.println("unselect objects");
+		for (Basic_object bo : objects) {
 			System.out.println(bo.depth);
 			selected_object = null;
 			bo.select = false;
 		}
 	}
+
 	@Override
 	public void mouseReleased(MouseEvent e) {
-//		System.out.println("mouse released");
-//		System.out.println(e.getX() + " " + e.getY());
+		// System.out.println("mouse released");
+		// System.out.println(e.getX() + " " + e.getY());
 		// mouse release action when mode is compos, assoc or gener
 		if (UML_editor.mode == "COMPOS" || UML_editor.mode == "ASSOC" || UML_editor.mode == "GENER") {
 			clicked_position = e.getPoint();
 			Collections.reverse(objects);
 			for (Basic_object bo : objects) {
 				// check if the destination point is in "another" basic_object
-//				System.out.println(bo.depth);
+				// System.out.println(bo.depth);
 				if (bo.contains(clicked_position) && !bo.equals(src_obj)) {
 					checkPort(bo); // check which port to show
 					des_port = (Point) showPort.clone();
@@ -268,48 +269,53 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				showPort.x = showPort.y = -1;
 			}
 			repaint();
-		//not single selection case 
-		}else if(UML_editor.mode == "SELECT" && selectionMode==2){
+			// not single selection case
+		} else if (UML_editor.mode == "SELECT" && selectionMode == 2) {
 			clicked_position = e.getPoint();
 			des_port = (Point) clicked_position.clone();
-//			System.out.println(src_port.x + " " + src_port.y);
+			// System.out.println(src_port.x + " " + src_port.y);
 			int start_x = src_port.x, start_y = src_port.y;
-			if(src_port.x > des_port.x && src_port.y > des_port.y){
+			if (src_port.x > des_port.x && src_port.y > des_port.y) {
 				start_x = des_port.x;
 				start_y = des_port.y;
 			}
-			Shape dragScope = new Rectangle(start_x, start_y, Math.abs(des_port.x-src_port.x), Math.abs(des_port.y-src_port.y));
-			try{
+			Shape dragScope = new Rectangle(start_x, start_y, Math.abs(des_port.x - src_port.x),
+					Math.abs(des_port.y - src_port.y));
+			try {
 				int num_selected = 0;
-				for(Basic_object bo : objects){
-					if(dragScope.contains(bo.x_cord, bo.y_cord) && dragScope.contains(bo.x_cord+bo.object_width, bo.y_cord+bo.object_height)){
+				for (Basic_object bo : objects) {
+					if (dragScope.contains(bo.x_cord, bo.y_cord)
+							&& dragScope.contains(bo.x_cord + bo.object_width, bo.y_cord + bo.object_height)) {
 						bo.select = true;
 						num_selected++;
 					}
 				}
-				
-				if(num_selected==1){ // only one object selected so is same as single selection
+
+				if (num_selected == 1) { // only one object selected so is same
+											// as single selection
 					selectionMode = 1;
-				}else if(num_selected==0){ // if no object included in the scope
+				} else if (num_selected == 0) { // if no object included in the
+												// scope
 					unselectObjects();
 					selectionMode = 0;
 				}
-				
 
-				drawDragScope(this.getGraphics(), start_x, start_y );
-			}catch(InterruptedException ie){
+				drawDragScope(this.getGraphics(), start_x, start_y);
+			} catch (InterruptedException ie) {
 				ie.getStackTrace();
 			}
-			
-//			System.out.println(des_port);
+
+			// System.out.println(des_port);
 		}
 	}
-	public void drawDragScope(Graphics g, int start_x, int start_y) throws InterruptedException{
+
+	public void drawDragScope(Graphics g, int start_x, int start_y) throws InterruptedException {
 		g.setColor(Color.blue);
-		g.drawRect(start_x, start_y, Math.abs(des_port.x-src_port.x), Math.abs(des_port.y-src_port.y));
+		g.drawRect(start_x, start_y, Math.abs(des_port.x - src_port.x), Math.abs(des_port.y - src_port.y));
 		Thread.sleep(500); // let the scope show for 0.5 sec
 		repaint();
 	}
+
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -340,7 +346,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	// mouseMotionListener
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		
+
 	}
 
 	@Override
@@ -370,6 +376,5 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		// System.out.println(p2.x + " " + p2.y + "dis: " + distance);
 		return (distance);
 	}
-	
-	
+
 }

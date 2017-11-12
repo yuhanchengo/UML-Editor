@@ -13,9 +13,13 @@ public abstract class Basic_object implements Comparable{
 	protected int object_width; //width of object 
 	protected int namePosRatio;
 	protected Boolean select = false; // show ports or not in other word 
+	protected ArrayList<Basic_object> compos_objects;
 	public static final int port_size = 10; // 
 	protected ArrayList<Point> port_cords = new ArrayList<Point>();
 	
+	public Basic_object(){
+		
+	}
 	public Basic_object(int x, int y, int object_width, int object_height, int namePosRatio){
 		this.x_cord = x;
 		this.y_cord = y;
@@ -48,6 +52,10 @@ public abstract class Basic_object implements Comparable{
 	public int compareTo(Basic_object compareObject) {
 		return compareObject.depth - this.depth;
 	}
+	abstract protected void drawClassLine(Graphics g);
+	
+		
+	
 
 	
 

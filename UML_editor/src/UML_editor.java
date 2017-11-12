@@ -22,10 +22,9 @@ import javax.swing.JSplitPane;
 public class UML_editor extends JFrame {
 	public static String mode;
 	public ArrayList<JButton> buttons = new ArrayList<JButton>();
-	private UML_canvas canvas;
+	private UML_canvas canvas= new UML_canvas();
 	// pre_setting in constructor
 	UML_editor() {
-		canvas = new UML_canvas();
 		// this.setLayout(new BorderLayout());
 
 		// Menu Bar of frame
@@ -36,10 +35,13 @@ public class UML_editor extends JFrame {
 		menuBar.add(Edit);
 		JMenuItem group = new JMenuItem("Group");
 		JMenuItem chg_obj_name = new JMenuItem("Change Object Name");
+		JMenuItem ungroup = new JMenuItem("UnGroup");
 		Edit.add(group);
 		Edit.add(chg_obj_name);
-		group.addActionListener(new MenuActionListener());
-		chg_obj_name.addActionListener(new MenuActionListener());
+		Edit.add(ungroup);
+		group.addActionListener(new MenuActionListener(canvas));
+		chg_obj_name.addActionListener(new MenuActionListener(canvas));
+		ungroup.addActionListener(new MenuActionListener(canvas));
 		
 		// button panel setting
 		JPanel btnPanel = new JPanel();
@@ -119,10 +121,13 @@ public class UML_editor extends JFrame {
 
 	// menuActionListener for menuItem
 	public class MenuActionListener implements ActionListener {
-
+		UML_canvas canvas;
+		MenuActionListener(UML_canvas canvas){
+			this.canvas = canvas;
+		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getActionCommand().equals("Change Object Name") && UML_canvas.selected_object!=null){
+			if(e.getActionCommand().equals("Change Object Name") && UML_canvas.selectionMode==1){
 				JOptionPane chgNamePane = new JOptionPane();
 //				chgNamePane.showConfirmDialog(null, "change or not", "Object Name alternation", JOptionPane.OK_CANCEL_OPTION);
 				String rename = JOptionPane.showInputDialog(null, "Enter object new name: ");
@@ -131,8 +136,44 @@ public class UML_editor extends JFrame {
 				}
 				repaint();
 				UML_canvas.selected_object = null;
-			}else if(e.getActionCommand().equals("Group")){
-				System.out.println("group");
+			}else if(e.getActionCommand().equals("Group") && UML_canvas.selectionMode==2){
+				Basic_object comp = new Composite();
+				int min_src_port_x = 1000, min_src_port_y = 1000;
+				int max_des_port_x = 0, max_des_port_y = 0;
+				for(Basic_object bo : new ArrayList<Basic_object>(canvas.objects)){
+					if(bo.select){
+						comp.compos_objects.add(bo);
+						canvas.objects.remove(bo);
+						comp.depth = bo.depth;
+						if(bo.x_cord < min_src_port_x){
+							min_src_port_x = bo.x_cord;
+						}
+						if(bo.y_cord < min_src_port_y){
+							min_src_port_y = bo.y_cord;
+						}
+						if(bo.x_cord+bo.object_width > max_des_port_x){
+							max_des_port_x = bo.x_cord+bo.object_width;
+						}
+						if(bo.y_cord + bo.object_height > max_des_port_y){
+							max_des_port_y = bo.y_cord + bo.object_height;
+						}
+					}
+				}
+				comp.x_cord = min_src_port_x;
+				comp.y_cord = min_src_port_y;
+				comp.object_height = max_des_port_y - min_src_port_y;
+				comp.object_width = max_des_port_x - min_src_port_x;
+				canvas.objects.add(comp);
+				// check if composed
+				System.out.println("canvas objects size : " + canvas.objects.size());
+//				System.out.println(comp.depth);
+//				for(Basic_object obj : comp.compos_objects){
+//					System.out.println(obj.depth);
+//				}
+				
+//				System.out.println("group");
+			}else if(e.getActionCommand().equals("UnGroup")){
+				
 			}
 		}
 
