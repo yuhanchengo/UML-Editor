@@ -26,7 +26,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	private final int canvas_length = 710;
 	public static int click_count = 0;
 	public static Basic_object selected_object;
-	private boolean singleSelection = false;
+	private int selectionMode = 0; // 0: none selected, 1:single selection, 2:group selection
 	private Point showPort = new Point(-1, -1);
 	private Point src_port, des_port = new Point(-1, -1);
 	private Basic_object src_obj; // record the source object
@@ -147,8 +147,8 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println("mouse pressed");
-		System.out.println(e.getX() + " " + e.getY());
+//		System.out.println("mouse pressed");
+//		System.out.println(e.getX() + " " + e.getY());
 		// only when clicked CLASS or USE_CASE button can one draw a figure on
 		// the canvas
 		if (e.getButton() == MouseEvent.BUTTON1) {
@@ -172,19 +172,27 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 			} else if (UML_editor.mode == "SELECT") {
 				// for single selection
+				boolean objClicked = false; // if any object is clicked 
 				for (Basic_object bo : objects) {
-					bo.select = false;
+//					bo.select = false;
 					if (bo.contains(clicked_position)) {
 						bo.select = true;
 						selected_object = bo;
-						singleSelection = true;
+						selectionMode = 1; // this is a single selection mode
+						objClicked = true;
 					}
 				}
-				// for group selection
-				if(selected_object==null){
-//					System.out.println("not in object region");
+				System.out.println("objClicked: " + objClicked);
+				System.out.println("single selection: " + selectionMode);
+				// if no object is clicked and was singleSelection
+				if(selectionMode==1 && !objClicked){
+					selectionMode = 0;
+					unselectObjects();
+				}else if(!objClicked){ // for group selection or none selection
+					System.out.println("group selection");
+					selectionMode = 2;
 					src_port = (Point)clicked_position.clone();
-					System.out.println(src_port);
+//					System.out.println(src_port);
 				}
 				repaint();
 			} else if (click_count >= 3) { // control # objects can add
@@ -193,11 +201,16 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		}
 
 	}
-	
+	public void unselectObjects(){
+		for(Basic_object bo: objects){
+			selected_object = null;
+			bo.select = false;
+		}
+	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		System.out.println("mouse released");
-		System.out.println(e.getX() + " " + e.getY());
+//		System.out.println("mouse released");
+//		System.out.println(e.getX() + " " + e.getY());
 		// mouse release action when mode is compos, assoc or gener
 		if (UML_editor.mode == "COMPOS" || UML_editor.mode == "ASSOC" || UML_editor.mode == "GENER") {
 			clicked_position = e.getPoint();
@@ -231,10 +244,10 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 			}
 			repaint();
 		//not single selection case 
-		}else if(UML_editor.mode == "SELECT" && selected_object==null){
+		}else if(UML_editor.mode == "SELECT" && selectionMode==2){
 			clicked_position = e.getPoint();
 			des_port = (Point) clicked_position.clone();
-			System.out.println(src_port.x + " " + src_port.y);
+//			System.out.println(src_port.x + " " + src_port.y);
 			int start_x = src_port.x, start_y = src_port.y;
 			if(src_port.x > des_port.x && src_port.y > des_port.y){
 				start_x = des_port.x;
@@ -249,11 +262,11 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 						included_obj = true;
 					}
 				}
+				// if no object included in the scope
 				if(included_obj==false){
 					// unselect selected objects
-					for(Basic_object bo : objects){
-						bo.select = false;
-					}
+					unselectObjects();
+					selectionMode=0;
 				}
 				drawDragScope(this.getGraphics(), start_x, start_y );
 			}catch(InterruptedException ie){
