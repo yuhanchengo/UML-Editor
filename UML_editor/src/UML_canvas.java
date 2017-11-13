@@ -87,7 +87,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				bo.draw(g);
 				bo.drawClassLine(g);
 				if(bo.select){
-					System.out.println("position in paint: " + bo.x_cord + " " + bo.y_cord);
+//					System.out.println("position in paint: " + bo.x_cord + " " + bo.y_cord);
 					bo.updatePorts();
 					for (Point coord : bo.port_cords) {
 //						System.out.println("in show port");
@@ -160,12 +160,12 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		System.out.println("mouse clicked");
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// System.out.println("mouse pressed");
+		 System.out.println("mouse pressed");
 		// System.out.println(e.getX() + " " + e.getY());
 		// only when clicked CLASS or USE_CASE button can one draw a figure on
 		// the canvas
@@ -221,15 +221,15 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 					}
 				}
 				Collections.reverse(objects);
-				System.out.println("objClicked: " + objClicked);
-				System.out.println("single selection: " + selectionMode);
+//				System.out.println("objClicked: " + objClicked);
+//				System.out.println("single selection: " + selectionMode);
 				// if no object is clicked and was singleSelection
 				if (selectionMode == 1 && !objClicked) {
 					selectionMode = 0;
 					unselectObjects();
 				} else if (!objClicked) { // for group selection or none
 											// selection
-					System.out.println("group selection");
+//					System.out.println("group selection");
 					selectionMode = 2;
 					src_port = (Point) clicked_position.clone();
 					// System.out.println(src_port);
@@ -253,7 +253,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// System.out.println("mouse released");
+		 System.out.println("mouse released");
 		// System.out.println(e.getX() + " " + e.getY());
 		// mouse release action when mode is compos, assoc or gener
 		if (UML_editor.mode == "COMPOS" || UML_editor.mode == "ASSOC" || UML_editor.mode == "GENER") {
@@ -335,14 +335,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 			}
 
 			// System.out.println(des_port);
-		}else if(UML_editor.mode=="SELECT" && selectionMode==1){
-			selected_object.x_cord = e.getX();
-			selected_object.y_cord = e.getY();
-			updateShowPort();
-			repaint();
-//			System.out.println("mouse release");
-			System.out.println("final position: " +selected_object.x_cord + " " + selected_object.y_cord);
-//			System.out.println("final position: " + e.getX() + " " + e.getY());
 		}
 	}
 
@@ -385,11 +377,12 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	public void mouseDragged(MouseEvent e) {
 		if(UML_editor.mode == "SELECT" && selectionMode == 1){
 //			System.out.println("single object dragged");
-			selected_object.x_cord = e.getX();
-			selected_object.y_cord = e.getY();
+			selected_object.x_cord += (e.getX()-selected_object.x_cord);
+			selected_object.y_cord += (e.getY()-selected_object.y_cord);
 			System.out.println("dragged position: " + selected_object.x_cord + " " + selected_object.y_cord);
+			repaint();
 		}
-		repaint();
+		
 	}
 
 	@Override
