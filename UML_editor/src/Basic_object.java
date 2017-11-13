@@ -16,7 +16,6 @@ public abstract class Basic_object implements Comparable{
 	protected ArrayList<Basic_object> compos_objects;
 	public static final int port_size = 10; // 
 	protected ArrayList<Point> port_cords = new ArrayList<Point>();
-	
 	public Basic_object(){
 		
 	}
@@ -58,7 +57,6 @@ public abstract class Basic_object implements Comparable{
 	}
 	abstract protected void drawClassLine(Graphics g);
 	protected void updatePorts(){
-		System.out.println("port upate");
 		// west
 		port_cords.set(0, new Point(x_cord - port_size, y_cord + this.object_height/2-port_size/2));
 		// south
@@ -67,7 +65,6 @@ public abstract class Basic_object implements Comparable{
 		port_cords.set(2, new Point(x_cord + this.object_width/2 - port_size/2, y_cord - port_size));
 		// east
 		port_cords.set(3, new Point(x_cord + this.object_width, y_cord + this.object_height/2 - port_size/2));
-		System.out.println(port_cords.get(0));
 	}
 		
 	
