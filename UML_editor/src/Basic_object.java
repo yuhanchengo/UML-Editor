@@ -26,10 +26,14 @@ public abstract class Basic_object implements Comparable{
 		this.object_height = object_height;
 		this.object_width = object_width;
 		this.namePosRatio = namePosRatio;
-		port_cords.add(new Point(x_cord - port_size, y_cord + this.object_height/2-port_size/2));
-		port_cords.add(new Point(x_cord + this.object_width/2 - port_size/2, y_cord + this.object_height));
-		port_cords.add(new Point(x_cord + this.object_width/2 - port_size/2, y_cord - port_size));
-		port_cords.add(new Point(x_cord + this.object_width, y_cord + this.object_height/2 - port_size/2));
+		Point West = new Point(x_cord - port_size, y_cord + this.object_height/2-port_size/2);
+		Point South = new Point(x_cord + this.object_width/2 - port_size/2, y_cord + this.object_height);
+		Point North = new Point(x_cord + this.object_width/2 - port_size/2, y_cord - port_size);
+		Point East = new Point(x_cord + this.object_width, y_cord + this.object_height/2 - port_size/2);
+		port_cords.add(West);
+		port_cords.add(South);
+		port_cords.add(North);
+		port_cords.add(East);
 
 	}
 
@@ -53,7 +57,18 @@ public abstract class Basic_object implements Comparable{
 		return compareObject.depth - this.depth;
 	}
 	abstract protected void drawClassLine(Graphics g);
-	
+	protected void updatePorts(){
+		System.out.println("port upate");
+		// west
+		port_cords.set(0, new Point(x_cord - port_size, y_cord + this.object_height/2-port_size/2));
+		// south
+		port_cords.set(1, new Point(x_cord + this.object_width/2 - port_size/2, y_cord + this.object_height));
+		//north
+		port_cords.set(2, new Point(x_cord + this.object_width/2 - port_size/2, y_cord - port_size));
+		// east
+		port_cords.set(3, new Point(x_cord + this.object_width, y_cord + this.object_height/2 - port_size/2));
+		System.out.println(port_cords.get(0));
+	}
 		
 	
 

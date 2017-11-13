@@ -72,6 +72,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 						o.draw(g);
 						o.drawClassLine(g);
 						for (Point coord : o.port_cords) {
+							
 							showConnectionPort(g, coord.x, coord.y, obj_port_size);
 						}
 					}
@@ -85,7 +86,11 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				bo.draw(g);
 				bo.drawClassLine(g);
 				if(bo.select){
+					System.out.println("position in paint: " + bo.x_cord + " " + bo.y_cord);
+					bo.updatePorts();
 					for (Point coord : bo.port_cords) {
+//						System.out.println("in show port");
+//						System.out.println(coord.x + " " + coord.y);
 						showConnectionPort(g, coord.x, coord.y, obj_port_size);
 					}
 				}
@@ -177,8 +182,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 						src_port = (Point) showPort.clone();
 					}
 				}
-
-			} else if (UML_editor.mode == "SELECT") {
+			}else if (UML_editor.mode == "SELECT") {
 				// for single selection
 				Collections.reverse(objects); // sort from shallow to depth
 				boolean objClicked = false; // if any object is clicked
@@ -189,6 +193,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 							System.out.println("composite  object clicked");
 							selectionMode = 3;
 						} else {
+							System.out.println("single object pressed");
 							selectionMode = 1;
 						}
 						unselectObjects(); // unselect other objects
@@ -306,6 +311,13 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 			}
 
 			// System.out.println(des_port);
+		}else if(UML_editor.mode=="SELECT" && selectionMode==1){
+			selected_object.x_cord = e.getX();
+			selected_object.y_cord = e.getY();
+			repaint();
+//			System.out.println("mouse release");
+			System.out.println("final position: " +selected_object.x_cord + " " + selected_object.y_cord);
+//			System.out.println("final position: " + e.getX() + " " + e.getY());
 		}
 	}
 
@@ -346,7 +358,13 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	// mouseMotionListener
 	@Override
 	public void mouseDragged(MouseEvent e) {
-
+		if(UML_editor.mode == "SELECT" && selectionMode == 1){
+//			System.out.println("single object dragged");
+			selected_object.x_cord = e.getX();
+			selected_object.y_cord = e.getY();
+			System.out.println("dragged position: " + selected_object.x_cord + " " + selected_object.y_cord);
+		}
+		repaint();
 	}
 
 	@Override
@@ -357,6 +375,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	// check which port of the object to show
 	public void checkPort(Basic_object bo) {
+		bo.updatePorts();
 		double min = 1000;
 		// find minimum distance port
 		for (Point p : bo.port_cords) {
