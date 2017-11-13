@@ -68,14 +68,15 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 			Basic_object bo = objects.get(i);
 			if(bo instanceof Composite){
 				if(bo.select){
-					for(Basic_object o: bo.compos_objects){
-						o.draw(g);
-						o.drawClassLine(g);
-						for (Point coord : o.port_cords) {
-							
-							showConnectionPort(g, coord.x, coord.y, obj_port_size);
-						}
-					}
+					drawComposite(g, bo, obj_port_size);
+//					for(Basic_object o: bo.compos_objects){
+//						o.draw(g);
+//						o.drawClassLine(g);
+//						for (Point coord : o.port_cords) {
+//							
+//							showConnectionPort(g, coord.x, coord.y, obj_port_size);
+//						}
+//					}
 				}else{
 					for(Basic_object o: bo.compos_objects){
 						o.draw(g);
@@ -132,7 +133,19 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 		}
 	}
-
+	public void drawComposite(Graphics g, Basic_object bo, int obj_port_size){
+		if(!(bo instanceof Composite)){
+			bo.draw(g);
+			bo.drawClassLine(g);
+			for (Point coord : bo.port_cords) {
+				showConnectionPort(g, coord.x, coord.y, obj_port_size);
+			}
+			return;
+		}
+		for(Basic_object o : bo.compos_objects){
+			drawComposite(g,o,obj_port_size);
+		}
+	}
 	/*
 	 * show connection ports of an object
 	 */
@@ -179,7 +192,11 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 						src_obj = bo; // record source object;
 						checkPort(bo);
 						// assign the current showPort as src_port
+						
+//						src_port = showPort;// the address of the port of the object
 						src_port = (Point) showPort.clone();
+//						System.out.println("mouse pressed src_port " + src_port);
+						
 					}
 				}
 			}else if (UML_editor.mode == "SELECT") {
@@ -228,7 +245,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	public void unselectObjects() {
 		// System.out.println("unselect objects");
 		for (Basic_object bo : objects) {
-			System.out.println(bo.depth);
+//			System.out.println(bo.depth);
 			selected_object = null;
 			bo.select = false;
 		}
@@ -247,7 +264,10 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				// System.out.println(bo.depth);
 				if (bo.contains(clicked_position) && !bo.equals(src_obj)) {
 					checkPort(bo); // check which port to show
+//					des_port = showPort;
 					des_port = (Point) showPort.clone();
+					System.out.println("mouse released des_port " + des_port);
+					
 					break;
 				}
 			}
@@ -267,6 +287,10 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 					break;
 				default:
 				}
+				System.out.println("mouse released src_port " + src_port);
+				System.out.println("mouse released des_port " + des_port);
+//				addPort(des_port);
+//				addPort(src_port);
 				addPort((Point) src_port.clone());
 				addPort((Point) des_port.clone());
 				src_port.x = src_port.y = des_port.x = des_port.y = -1;
@@ -314,6 +338,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		}else if(UML_editor.mode=="SELECT" && selectionMode==1){
 			selected_object.x_cord = e.getX();
 			selected_object.y_cord = e.getY();
+			updateShowPort();
 			repaint();
 //			System.out.println("mouse release");
 			System.out.println("final position: " +selected_object.x_cord + " " + selected_object.y_cord);
@@ -375,19 +400,24 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	// check which port of the object to show
 	public void checkPort(Basic_object bo) {
-		bo.updatePorts();
+//		bo.updatePorts();
 		double min = 1000;
 		// find minimum distance port
 		for (Point p : bo.port_cords) {
 			double dist = distance(clicked_position, p);
 			if (dist < min) {
-				showPort = (Point) p.clone();
+				showPort = new Point(p); // reference to the port
+				System.out.println("showPort :" + showPort);
+//				showPort = (Point) p.clone();
 				min = dist;
 			}
 		}
 		// System.out.println("showport: " + showPort.x + " " + showPort.y);
 		repaint();
 
+	}
+	public void updateShowPort(){
+		System.out.println("update Show Port: " +showPort.x + " " + showPort.y);
 	}
 
 	private double distance(Point p1, Point p2) {
