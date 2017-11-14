@@ -25,7 +25,6 @@ public class UML_editor extends JFrame {
 	private UML_canvas canvas= new UML_canvas();
 	// pre_setting in constructor
 	UML_editor() {
-		// this.setLayout(new BorderLayout());
 
 		// Menu Bar of frame
 		JMenuBar menuBar = new JMenuBar();
@@ -73,8 +72,6 @@ public class UML_editor extends JFrame {
 		splitPane.setResizeWeight(0.05);
 
 		// add components to frame
-		// this.add(btnPanel, BorderLayout.WEST);
-		// this.add(new UML_canvas(), BorderLayout.EAST);
 		this.add(splitPane, BorderLayout.CENTER);
 		this.setJMenuBar(menuBar);
 	}

@@ -46,14 +46,7 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	 * 1. add the new object to a list 2. call repaint() 3. In paint(Graphics)
 	 * draw the list of objects
 	 */
-	// @ Override
-	// public void paintComponent(Graphics g){
-	// int top = objects.size();
-	// for (int i = 0; i < top; i++) {
-	// Basic_object bo = objects.get(i);
-	// bo.draw(g);
-	// }
-	// }
+
 
 	public void paint(Graphics g) {
 		int obj_size = objects.size();
@@ -66,25 +59,8 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		 */
 		for (int i = 0; i < obj_size; i++) {
 			Basic_object bo = objects.get(i);
-			if(bo instanceof Composite){
-				if(bo.select){
-					drawComposite(g, bo, obj_port_size);
-				}else{
-					for(Basic_object o: bo.compos_objects){
-						o.draw(g);
-						o.drawClassLine(g);
-					}
-				}
-			}else{
-				bo.draw(g);
-				bo.drawClassLine(g);
-				if(bo.select){
-					bo.updatePorts();
-					for (Point coord : bo.port_cords) {
-						showConnectionPort(g, coord.x, coord.y, obj_port_size);
-					}
-				}
-			}
+			drawComposite(g, bo, obj_port_size, bo.select);
+
 			/*
 			 * show the port that is going to be connected
 			 */
@@ -94,15 +70,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				showPort.x = -1;
 				showPort.y = -1;
 			}
-			/*
-			 * if the object has a name, then show its name
-			 */
-			if (bo.name != null) {
-				g.setFont(new Font("TimesRoman", Font.PLAIN, 16));
-				g.drawString(bo.name, bo.x_cord + (bo.object_width - bo.name.length() * 7) / 2,
-						bo.y_cord + bo.object_height / bo.namePosRatio);
-			}
-
 		}
 		/*
 		 * draw connection lines on the graph
@@ -116,25 +83,34 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		/*
 		 * draw ports for connection lines
 		 */
-		
 		for (int i = 0; i < port_size; i++) {
 			Point p = ports.get(i);
 			showConnectionPort(g, p.x, p.y, obj_port_size);
-			System.out.println(p.x+" " + p.y);
 		}
 	}
-	public void drawComposite(Graphics g, Basic_object bo, int obj_port_size){
+	public void drawComposite(Graphics g, Basic_object bo, int obj_port_size, boolean select){
 		if(!(bo instanceof Composite)){
 			bo.updatePorts();
 			bo.draw(g);
 			bo.drawClassLine(g);
-			for (Point coord : bo.port_cords) {
-				showConnectionPort(g, coord.x, coord.y, obj_port_size);
+			/*
+			 * if the object has a name, then show its name
+			 */
+			if (bo.name != null) {
+				g.setFont(new Font("TimesRoman", Font.PLAIN, 16));
+				g.drawString(bo.name, bo.x_cord + (bo.object_width - bo.name.length() * 7) / 2,
+						bo.y_cord + bo.object_height / bo.namePosRatio);
 			}
+			if(select){
+				for (Point coord : bo.port_cords) {
+					showConnectionPort(g, coord.x, coord.y, obj_port_size);
+				}
+			}
+			
 			return;
 		}
 		for(Basic_object o : bo.compos_objects){
-			drawComposite(g,o,obj_port_size);
+			drawComposite(g,o,obj_port_size, select);
 		}
 	}
 	/*
@@ -151,13 +127,11 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-//		System.out.println("mouse clicked");
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 //		 System.out.println("mouse pressed");
-		
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			clicked_position = e.getPoint();
 			if (UML_editor.mode == "CLASS" && click_count < 3) {
@@ -182,7 +156,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 						checkPort(bo);
 						// assign the current showPort as src_port
 						src_port = (Point) showPort.clone();
-//						System.out.println("mouse pressed src_port " + src_port);
 						
 					}
 				}
@@ -191,7 +164,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				Collections.reverse(objects); // sort from shallow to depth
 				boolean objClicked = false; // if any object is clicked
 				for (Basic_object bo : objects) {
-					// bo.select = false;
 					if (bo.contains(clicked_position)) {
 						if (bo instanceof Composite) {
 //							System.out.println("composite  object clicked");
@@ -208,18 +180,14 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 					}
 				}
 				Collections.reverse(objects);
-//				System.out.println("objClicked: " + objClicked);
-//				System.out.println("single selection: " + selectionMode);
 				// if no object is clicked and was singleSelection
 				if (selectionMode == 1 && !objClicked) {
 					selectionMode = 0;
 					unselectObjects();
-				} else if (!objClicked) { // for group selection or none
-											// selection
+				} else if (!objClicked) { // for group selection or none selection
 //					System.out.println("group selection");
 					selectionMode = 2;
 					src_port = (Point) clicked_position.clone();
-					// System.out.println(src_port);
 				}
 				repaint();
 			} else if (click_count >= 3) { // control # objects can add
@@ -232,7 +200,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	public void unselectObjects() {
 		// System.out.println("unselect objects");
 		for (Basic_object bo : objects) {
-//			System.out.println(bo.depth);
 			selected_object = null;
 			bo.select = false;
 		}
@@ -240,21 +207,15 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-//		 System.out.println("mouse released");
-		// System.out.println(e.getX() + " " + e.getY());
 		// mouse release action when mode is compos, assoc or gener
 		if (UML_editor.mode == "COMPOS" || UML_editor.mode == "ASSOC" || UML_editor.mode == "GENER") {
 			clicked_position = e.getPoint();
 			Collections.reverse(objects);
 			for (Basic_object bo : objects) {
 				// check if the destination point is in "another" basic_object
-				// System.out.println(bo.depth);
 				if (bo.contains(clicked_position) && !bo.equals(src_obj)) {
 					checkPort(bo); // check which port to show
-//					des_port = showPort;
 					des_port = (Point) showPort.clone();
-//					System.out.println("mouse released des_port " + des_port);
-					
 					break;
 				}
 			}
@@ -274,10 +235,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 					break;
 				default:
 				}
-//				System.out.println("mouse released src_port " + src_port);
-//				System.out.println("mouse released des_port " + des_port);
-//				addPort(des_port);
-//				addPort(src_port);
 				addPort((Point) src_port.clone());
 				addPort((Point) des_port.clone());
 				src_port.x = src_port.y = des_port.x = des_port.y = -1;
@@ -289,7 +246,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 		} else if (UML_editor.mode == "SELECT" && selectionMode == 2) {
 			clicked_position = e.getPoint();
 			des_port = (Point) clicked_position.clone();
-			// System.out.println(src_port.x + " " + src_port.y);
 			int start_x = src_port.x, start_y = src_port.y;
 			if (src_port.x > des_port.x && src_port.y > des_port.y) {
 				start_x = des_port.x;
@@ -321,7 +277,6 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 				ie.getStackTrace();
 			}
 
-			// System.out.println(des_port);
 		}
 	}
 
@@ -363,10 +318,8 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if(UML_editor.mode == "SELECT" && selectionMode == 1){
-//			System.out.println("single object dragged");
 			selected_object.x_cord += (e.getX()-selected_object.x_cord);
 			selected_object.y_cord += (e.getY()-selected_object.y_cord);
-//			System.out.println("dragged position: " + selected_object.x_cord + " " + selected_object.y_cord);
 			repaint();
 		}else if(UML_editor.mode == "SELECT" && selectionMode == 3){
 			int move_x = e.getX()-selected_object.x_cord;
@@ -399,26 +352,20 @@ public class UML_canvas extends Canvas implements MouseListener, MouseMotionList
 	// check which port of the object to show
 	public void checkPort(Basic_object bo) {
 		double min = 1000;
-		Point temp = new Point();
 		// find minimum distance port
 		for (Point p : bo.port_cords) {
 			double dist = distance(clicked_position, p);
 			if (dist < min) {
-//				showPort = new Point(p); // reference to the port
 				showPort = (Point) p.clone();
-//				temp = p;
 				min = dist;
 			}
 		}
-//		addPort(temp);
-		// System.out.println("showport: " + showPort.x + " " + showPort.y);
 		repaint();
 
 	}
 
 	private double distance(Point p1, Point p2) {
 		double distance = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow((p1.y - p2.y), 2));
-		// System.out.println(p2.x + " " + p2.y + "dis: " + distance);
 		return (distance);
 	}
 
