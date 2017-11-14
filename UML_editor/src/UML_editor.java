@@ -162,19 +162,14 @@ public class UML_editor extends JFrame {
 				comp.object_width = max_des_port_x - min_src_port_x;
 				canvas.objects.add(comp);
 				// check if composed
-				System.out.println("length of objects after group : " + canvas.objects.size());
-//				System.out.println(comp.depth);
-//				for(Basic_object obj : comp.compos_objects){
-//					System.out.println(obj.depth);
-//				}
-				
-//				System.out.println("group");
+//				System.out.println("length of objects after group : " + canvas.objects.size());
+
 			}else if(e.getActionCommand().equals("UnGroup") && UML_canvas.selectionMode==3){
 				for(Basic_object bo : UML_canvas.selected_object.compos_objects){
 					canvas.objects.add(bo);
 				}
 				canvas.objects.remove(UML_canvas.selected_object);
-				System.out.println("length of objects after ungroup: " + canvas.objects.size());
+//				System.out.println("length of objects after ungroup: " + canvas.objects.size());
 			}
 		}
 
