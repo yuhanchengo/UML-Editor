@@ -3,10 +3,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -48,17 +53,24 @@ public class UML_editor extends JFrame {
 		// btnPanel.setBackground(Color.GREEN);
 		GridLayout gridlayout = new GridLayout(6, 1);
 		btnPanel.setLayout(gridlayout);
-		JButton select = createButton("SELECT");
+//		System.out.println(this.getClass().);
+		ImageIcon Class_img = new ImageIcon(getClass().getResource("class.png"));
+		ImageIcon Assoc_img = new ImageIcon(getClass().getResource("association.png"));
+		ImageIcon Usecase_img = new ImageIcon(getClass().getResource("use_case.png"));
+		ImageIcon Compos_img = new ImageIcon(getClass().getResource("composition.png"));
+		ImageIcon Gener_img = new ImageIcon(getClass().getResource("generalization.png"));
+		ImageIcon Select_img = new ImageIcon(getClass().getResource("select.png"));
+		JButton select = createButton(Select_img, "SELECT");
 		buttons.add(select);
-		JButton assoc = createButton("ASSOC");
+		JButton assoc = createButton(Assoc_img, "ASSOC");
 		buttons.add(assoc);
-		JButton gener = createButton("GENER");
+		JButton gener = createButton(Gener_img, "GENER");
 		buttons.add(gener);
-		JButton compos = createButton("COMPOS");
+		JButton compos = createButton(Compos_img, "COMPOS");
 		buttons.add(compos);
-		JButton Class = createButton("CLASS");
+		JButton Class = createButton(Class_img, "CLASS");
 		buttons.add(Class);
-		JButton usecase = createButton("USE_CASE");
+		JButton usecase = createButton(Usecase_img, "USE_CASE");
 		buttons.add(usecase);
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).addActionListener(new BtnListener());
@@ -83,9 +95,10 @@ public class UML_editor extends JFrame {
 		editor.setWindowProperty();
 	}
 	
-	private static JButton createButton(String Name) {
-		JButton btn = new JButton(Name);
-		btn.setName(Name);
+	private static JButton createButton(ImageIcon img, String name) {
+		JButton btn = new JButton(name);
+		btn.setIcon(img);
+		btn.setName(name);
 		btn.setPreferredSize(new Dimension(100, 100));
 		return btn;
 	}
@@ -101,6 +114,7 @@ public class UML_editor extends JFrame {
 	public class BtnListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			System.out.println(e.getSource() instanceof JButton);
 			if (e.getSource() instanceof JButton) {
 				// clear other buttons' color
 				resetButton();
@@ -109,7 +123,6 @@ public class UML_editor extends JFrame {
 				btn.setForeground(Color.black);
 				btn.setOpaque(true);
 				mode = e.getActionCommand();
-				
 
 			}
 
