@@ -7,6 +7,7 @@ public class Composition_line extends Line_object{
 	private int diagonal; //  diagonal of square port
 	private int rhombus_size = 10;
 	private int rhombus_diagonal = (int)(this.rhombus_size*Math.sqrt(2)/2);
+	
 	public Composition_line(Port src, Port des){
 		super(src, des);
 	}
@@ -17,7 +18,9 @@ public class Composition_line extends Line_object{
 		drawAddsOn(g);
 		// if port has line, then show
 		this.src_port.showPort(true);
+		src_port.draw(g);
 		this.des_port.showPort(true);
+		des_port.draw(g);
 	}
 	/*
 	 * draw the rhombus at the starting connection port of composition line

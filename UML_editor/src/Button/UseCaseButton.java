@@ -9,15 +9,14 @@ import Mode.UseCaseMode;
 import uml_editor.UML_canvas;
 import uml_editor.UML_editor;
 
+@SuppressWarnings("serial")
 public class UseCaseButton extends Button{
-	private static final ImageIcon img = new ImageIcon("source/use_case.png");
+	private static final ImageIcon img = new ImageIcon("src/source/use_case.png");
 	public UseCaseButton(){
-		super("USECASE");
-//		super(img, "USE_CASE");
+		super(img, "USE_CASE");
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("UseCase Pressed");
 		UML_editor.resetButtons();
 		this.setBackground(Color.black);
 		this.setForeground(Color.black);

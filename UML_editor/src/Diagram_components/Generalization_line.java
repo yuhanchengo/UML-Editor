@@ -16,7 +16,9 @@ public class Generalization_line extends Line_object{
 		g.drawLine(this.src_port.x+triangle_height+port_size/2, this.src_port.y + port_size/2, this.des_port.x + port_size/2, this.des_port.y + port_size/2);
 		drawAddsOn(g);
 		this.src_port.showPort(true);
+		src_port.draw(g);
 		this.des_port.showPort(true);
+		des_port.draw(g);
 	}
 	/*
 	 * draw the triangle at the starting connection port of generalization line

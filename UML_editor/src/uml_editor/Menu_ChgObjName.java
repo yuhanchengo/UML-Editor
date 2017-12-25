@@ -15,11 +15,9 @@ public class Menu_ChgObjName extends JMenuItem implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("change object name");
-//		JOptionPane chgNamePane = new JOptionPane();
-//		chgNamePane.showConfirmDialog(null, "change or not", "Object Name alternation", JOptionPane.OK_CANCEL_OPTION);
 		String rename = JOptionPane.showInputDialog(null, "Enter object new name: ");
 		if(rename!=null){
+			System.out.println(UML_canvas.selected_object);
 			UML_canvas.selected_object.setName(rename);
 		}
 		repaint();

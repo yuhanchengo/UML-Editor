@@ -8,24 +8,13 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+@SuppressWarnings("serial")
 public class Button extends JButton implements ActionListener{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	public Button(String name){
-		JButton btn = new JButton(name);
-//		btn.setIcon(img);
-		btn.setName(name);
-		btn.setPreferredSize(new Dimension(100, 100));
-		this.addActionListener(this);
-	}
 	public Button(ImageIcon img, String name){
-		JButton btn = new JButton(name);
-		btn.setIcon(img);
-		btn.setName(name);
-		btn.setPreferredSize(new Dimension(100, 100));
+		setIcon(img);
+		setName(name);
+		setPreferredSize(new Dimension(100, 100));
 		this.addActionListener(this);
 	}
 	@Override

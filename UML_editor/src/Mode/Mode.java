@@ -11,10 +11,11 @@ import uml_editor.UML_canvas;
 
 public class Mode implements MouseListener, MouseMotionListener{
 	Point clicked_position;
-	Port src_port = null;
-	Port des_port = null;
-	boolean src_port_prevState = false; // src_port 前個狀態，是show or not
+	Port src_port = null; // src port for line
+	Port des_port = null; // des port for line
+	boolean src_port_prevState = false; // src_port's previous state，show or not
 	Diagram_components src_obj;
+	
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub

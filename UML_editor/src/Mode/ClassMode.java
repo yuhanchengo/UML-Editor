@@ -2,15 +2,14 @@ package Mode;
 
 import java.awt.event.MouseEvent;
 
-import com.apple.eawt.AppEvent.SystemSleepEvent;
-
 import Diagram_components.Class;
 import Diagram_components.Diagram_components;
 import uml_editor.UML_canvas;
 
 public class ClassMode extends Mode{
 	
-	private int click_count=0;
+	private int click_count=0; // basic_object at most add three times
+	
 	public ClassMode(){
 		super();
 		click_count=0;
@@ -29,13 +28,11 @@ public class ClassMode extends Mode{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-//		System.out.println("Class Mode");
 		if(e.getButton()==MouseEvent.BUTTON1){
 			clicked_position = e.getPoint();
 			if(click_count<3){
@@ -43,7 +40,6 @@ public class ClassMode extends Mode{
 				comp.depth = UML_canvas.objDepth;
 				UML_canvas.objDepth--;
 				addObjects(comp);
-				System.out.println(UML_canvas.objects.size());
 				// sort objects with depth
 				click_count++;
 			}

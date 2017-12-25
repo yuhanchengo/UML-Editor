@@ -1,24 +1,14 @@
 package uml_editor;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 /*
@@ -33,7 +23,9 @@ import Button.GeneralizationButton;
 import Button.SelectButton;
 import Button.UseCaseButton;
 
+@SuppressWarnings("serial")
 public class UML_editor extends JFrame {
+	
 	private static ArrayList<Button> buttons = new ArrayList<Button>();
 	private UML_canvas canvas= new UML_canvas();
 	// pre_setting in constructor
@@ -79,9 +71,10 @@ public class UML_editor extends JFrame {
 		// add components to frame
 		this.add(splitPane, BorderLayout.CENTER);
 		this.setJMenuBar(menuBar);
+		setVisible(true);
 	}
 
-	
+	// reset buttons when other button is pressed
 	public static void resetButtons(){
 		for(Button btn: buttons){
 			btn.resetButton();
@@ -89,14 +82,11 @@ public class UML_editor extends JFrame {
 	}
 	
 	
-	
+	// set window property for the editor
 	public void setWindowProperty() {
 		setTitle("UML Editor");
 		setSize(1000, 1000);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		this.setResizable(false);
-		setVisible(true);
-
 	}
 	
 

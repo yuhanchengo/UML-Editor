@@ -9,15 +9,14 @@ import Mode.CompositionMode;
 import uml_editor.UML_canvas;
 import uml_editor.UML_editor;
 
+@SuppressWarnings("serial")
 public class CompositionButton extends Button{
-	private static final ImageIcon img = new ImageIcon("source/composition.png");
+	private static final ImageIcon img = new ImageIcon("/Users/joy/GitHub/OO/project/UML_editor/src/source/composition.png");
 	public CompositionButton(){
-		super("COMP");
-//		super(img, "COMP");
+		super(img, "COMP");
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Composition Pressed");
 		UML_editor.resetButtons();
 		this.setBackground(Color.black);
 		this.setForeground(Color.black);

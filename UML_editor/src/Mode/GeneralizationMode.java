@@ -41,7 +41,6 @@ public class GeneralizationMode extends Mode{
 					src_port = obj.getPort(clicked_position);
 					src_port_prevState = src_port.getPortState();
 					src_port.showPort(true);
-					System.out.println("source port: " + src_port);
 					break;
 				}
 			}
@@ -58,14 +57,12 @@ public class GeneralizationMode extends Mode{
 		for(Diagram_components obj: UML_canvas.objects){
 			if(obj.contains(clicked_position) && !obj.equals(src_obj)){
 				des_port = obj.getPort(clicked_position);
-				System.out.println("des port: " + des_port);
 				break;
 			}
 		}
 		Collections.reverse(UML_canvas.objects);
 		if(src_port!=null && des_port!=null){
 			addObjects(new Generalization_line(src_port, des_port));
-			System.out.println("Generalization line added");
 			des_port.showPort(true);
 		}else if(src_port!=null){
 			src_port.showPort(src_port_prevState);
