@@ -4,4 +4,4 @@ object oriented programming
   The spec of the editor is in the project's "SPEC" folder
 - Final project is to refactor the midterm project
 
-![Class Diagram](UML_editor Class Diagram.png)
+![](UML_editor_Class_Diagram.png)
