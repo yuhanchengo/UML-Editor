@@ -31,6 +31,9 @@ public class UML_editor extends JFrame {
 	// pre_setting in constructor
 	UML_editor() {
 		setWindowProperty();
+	}
+	public void launch(){
+		
 		// Menu Bar of frame
 		JMenuBar menuBar = new JMenuBar();
 		JMenu File = new JMenu("File");
@@ -61,17 +64,15 @@ public class UML_editor extends JFrame {
 		for (int i = 0; i < buttons.size(); i++) {
 			btnPanel.add(buttons.get(i));
 		}
-
 		// splitPane to split canvas and btnPanel
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setLeftComponent(btnPanel);
-		splitPane.setRightComponent(canvas);
-		splitPane.setResizeWeight(0.05);
-
+				JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+				splitPane.setLeftComponent(btnPanel);
+				splitPane.setRightComponent(canvas);
+				splitPane.setResizeWeight(0.05);
 		// add components to frame
-		this.add(splitPane, BorderLayout.CENTER);
-		this.setJMenuBar(menuBar);
-		setVisible(true);
+				this.add(splitPane, BorderLayout.CENTER);
+				this.setJMenuBar(menuBar);
+				setVisible(true);
 	}
 
 	// reset buttons when other button is pressed
