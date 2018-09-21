@@ -1,7 +1,4 @@
-# OOP
-object oriented programming
-- UML_editor is the midterm project
-  The spec of the editor is in the project's "SPEC" folder
-- Final project is to refactor the midterm project
+# UML EDITOR
+The spec of the editor is in the project's "SPEC" folder
 
 ![](UML_editor_Class_Diagram.png)
